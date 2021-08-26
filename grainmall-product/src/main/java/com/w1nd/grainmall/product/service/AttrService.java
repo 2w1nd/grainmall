@@ -3,6 +3,8 @@ package com.w1nd.grainmall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.w1nd.common.utils.PageUtils;
 import com.w1nd.grainmall.product.entity.AttrEntity;
+import com.w1nd.grainmall.product.vo.AttrRespVO;
+import com.w1nd.grainmall.product.vo.AttrVo;
 
 import java.util.Map;
 
@@ -16,5 +18,13 @@ import java.util.Map;
 public interface AttrService extends IService<AttrEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveAttr(AttrVo attr);
+
+    PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId);
+
+    AttrRespVO getAttrInfo(Long attrId);
+
+    void updateAttr(AttrVo attr);
 }
 
