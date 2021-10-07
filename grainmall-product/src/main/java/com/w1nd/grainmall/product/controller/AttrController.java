@@ -1,8 +1,12 @@
 package com.w1nd.grainmall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.w1nd.grainmall.product.entity.ProductAttrValueEntity;
+import com.w1nd.grainmall.product.service.ProductAttrValueService;
+import com.w1nd.grainmall.product.vo.AttrGroupRelationVO;
 import com.w1nd.grainmall.product.vo.AttrRespVO;
 import com.w1nd.grainmall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +32,24 @@ public class AttrController {
     @Autowired
     private AttrService attrService;
 
+    @Autowired
+    ProductAttrValueService productAttrValueService;
 
+    @GetMapping("/base/listforspu/{spuId}")
+    public R baseAttrlistforspu(@PathVariable("spuId") Long spuId) {
+
+        List<ProductAttrValueEntity> entities = productAttrValueService.baseAttrlistforspu(spuId);
+
+        return R.ok().put("data", entities);
+    }
 
 
     // product/attr/base/list/{catelogId}
-    @GetMapping("/base/list/{catelogId}")
+    @GetMapping("/{attrType}/list/{catelogId}")
     public R baseAttrList(@RequestParam Map<String, Object> params,
-                          @PathVariable("catelogId") Long catelogId) {
-        PageUtils page = attrService.queryBaseAttrPage(params, catelogId);
+                          @PathVariable("catelogId") Long catelogId,
+                          @PathVariable("attrType")String type) {
+        PageUtils page = attrService.queryBaseAttrPage(params, catelogId, type);
         return R.ok().put("page", page);
     }
 
@@ -80,6 +94,14 @@ public class AttrController {
     //@RequiresPermissions("product:attr:update")
     public R update(@RequestBody AttrVo attr){
 		attrService.updateAttr(attr);
+
+        return R.ok();
+    }
+
+    @PostMapping("/update/{spuId}")
+    //@RequiresPermissions("product:attr:update")
+    public R updateSpuAttr(@PathVariable("spuId") Long spuId, @RequestBody List<ProductAttrValueEntity> entities){
+        productAttrValueService.updateSpuAttr(spuId, entities);
 
         return R.ok();
     }

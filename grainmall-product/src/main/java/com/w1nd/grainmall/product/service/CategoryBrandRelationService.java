@@ -2,8 +2,10 @@ package com.w1nd.grainmall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.w1nd.common.utils.PageUtils;
+import com.w1nd.grainmall.product.entity.BrandEntity;
 import com.w1nd.grainmall.product.entity.CategoryBrandRelationEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,5 +24,7 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
     void updateBrand(Long brandId, String name);
 
     void updateCategory(Long catId, String name);
+
+    List<BrandEntity> getBrandsByCatId(Long catId);
 }
 
