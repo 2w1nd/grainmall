@@ -8,6 +8,8 @@ spring:
 #        server-addr: 127.0.0.1:8848
 #        namespace: 2944a893-8602-4a8f-bd06-9663d22177ed
     alicloud:
+      access-key: LTAI5tNMPSaDcLKvXzcTfwEa
+      secret-key: rpNlNu053nbL7vgPAlKANwD5jJWSkY
       oss:
         endpoint: oss-cn-shanghai.aliyuncs.com
         bucket: grainmall-hello1
