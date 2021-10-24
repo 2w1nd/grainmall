@@ -52,13 +52,13 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     @Override
     public void saveDetail(CategoryBrandRelationEntity categoryBrandRelation) {
         Long brandId = categoryBrandRelation.getBrandId();
-        Long catelogId = categoryBrandRelation.getCatelogId();
+        Long catelogId = categoryBrandRelation.getCatalogId();
         // 1. 查询详细名字
         BrandEntity brandEntity = brandDao.selectById(brandId);
         CategoryEntity categoryEntity = categoryDao.selectById(catelogId);
 
         categoryBrandRelation.setBrandName(brandEntity.getName());
-        categoryBrandRelation.setCatelogName(categoryEntity.getName());
+        categoryBrandRelation.setCatalogName(categoryEntity.getName());
 
         this.save(categoryBrandRelation);
     }
