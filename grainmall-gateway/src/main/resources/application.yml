@@ -46,4 +46,9 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment}
+
+        - id: grainmall_host_route
+          uri: lb://grainmall-product
+          predicates:
+            - Host=**.grainmall.com
 ## 前端项目，带上/api

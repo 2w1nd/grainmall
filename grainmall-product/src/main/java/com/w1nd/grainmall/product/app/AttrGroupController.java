@@ -1,4 +1,4 @@
-package com.w1nd.grainmall.product.controller;
+package com.w1nd.grainmall.product.app;
 
 import java.util.Arrays;
 import java.util.List;

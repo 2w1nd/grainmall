@@ -1,4 +1,4 @@
-package com.w1nd.grainmall.product.controller;
+package com.w1nd.grainmall.product.app;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,13 +6,11 @@ import java.util.Map;
 
 import com.w1nd.grainmall.product.entity.ProductAttrValueEntity;
 import com.w1nd.grainmall.product.service.ProductAttrValueService;
-import com.w1nd.grainmall.product.vo.AttrGroupRelationVO;
 import com.w1nd.grainmall.product.vo.AttrRespVO;
 import com.w1nd.grainmall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.w1nd.grainmall.product.entity.AttrEntity;
 import com.w1nd.grainmall.product.service.AttrService;
 import com.w1nd.common.utils.PageUtils;
 import com.w1nd.common.utils.R;

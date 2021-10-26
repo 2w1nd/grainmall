@@ -1,14 +1,12 @@
-package com.w1nd.grainmall.product.controller;
+package com.w1nd.grainmall.product.app;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.w1nd.common.valid.AddGroup;
 import com.w1nd.common.valid.UpdateGroup;
 import com.w1nd.common.valid.UpdateStatusGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +18,6 @@ import com.w1nd.grainmall.product.entity.BrandEntity;
 import com.w1nd.grainmall.product.service.BrandService;
 import com.w1nd.common.utils.PageUtils;
 import com.w1nd.common.utils.R;
-
-import javax.validation.Valid;
 
 
 /**
