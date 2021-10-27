@@ -25,6 +25,15 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * 1. thymeleaf-starter：关闭缓存
  * 2. 静态资源都放在static文件夹下就可以按照路径访问
  * 3. 页面放在template下，直接访问
+ *
+ * 整合redis
+ * 1. 引入data-redis-starter
+ * 2. 简单配置host等信息
+ * 3. 使用springboot自动配置好的stringredistemplate来操作redis
+ *
+ * 整合redisson作为分布式锁等功能框架
+ *  1. 引入依赖
+ *  2. 撇脂redisson
  */
 @EnableFeignClients(basePackages = "com.w1nd.grainmall.product.feign")
 @EnableDiscoveryClient
