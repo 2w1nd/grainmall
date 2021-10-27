@@ -7,6 +7,9 @@ import com.w1nd.grainmall.product.vo.Catalog2Vo;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -101,8 +104,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 级联更新所有关联的数据
+     * 1. 同时进行多种缓存操作   @Caching
+     * 2. 指定删除某个分区下的所有数据 allEntries = true
      * @param category
      */
+    // @Caching(evict = {
+    //         @CacheEvict(value = "category", key = "'getLevel1Categorys'"),
+    //         @CacheEvict(value = "category", key = "'getCatalogJson'")
+    // })
+    @CacheEvict(value = "category", allEntries = true)
     @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
@@ -110,20 +120,68 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 
+    /**
+     // 每一个需要缓存的数据我们都要指定要放到哪个名字的缓存【缓存的分区（按照业务类型分）】
+     *  自定义：
+     *  1. 指定生成的缓存使用的key
+     *  2. 指定缓存的数据的存活时间
+     *  3. 将数据存为json格式
+     */
+    @Cacheable(value = {"category"}, key = "#root.method.name")  // 代表当前方法的结果需要缓存，如果缓存中有，方法不用调用，如果缓存中没有，会调用方法，最后将方法
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
         List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
         return categoryEntities;
     }
 
+    /**
+     * 使用Cacheable实现
+     * @return
+     */
+    @Cacheable(value = {"category"}, key = "#root.method.name")
+    @Override
+    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+        /**
+         * 1. 将数据库的多次查询变为一次
+         */
+        List<CategoryEntity> selectList = baseMapper.selectList(null);
+
+        // 1. 查出所有1级分类
+        List<CategoryEntity> level1Categorys = getParent_cid(selectList, 0L);
+        // 2. 封装数据
+        Map<String, List<Catalog2Vo>> parent_cid = level1Categorys.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            // 1. 每一个的一级分类，查到这个一级分类的二级分类
+            List<CategoryEntity> categoryEntities = getParent_cid(selectList, v.getParentCid());
+            // 2. 封装上面的结果
+            List<Catalog2Vo> catalog2Vos = null;
+            if (categoryEntities != null) {
+                catalog2Vos = categoryEntities.stream().map(l2 -> {
+                    Catalog2Vo catalog2Vo = new Catalog2Vo(v.getCatId().toString(), null, l2.getCatId().toString(), l2.getName());
+                    // 1. 找当前二级分类的三级分类封装成vo
+                    List<CategoryEntity> level3Catalog = getParent_cid(selectList, l2.getParentCid());
+                    if (level3Catalog != null) {
+                        List<Catalog2Vo.Catalog3Vo> collect = level3Catalog.stream().map(l3 -> {
+                            // 2. 封装成指定格式
+                            Catalog2Vo.Catalog3Vo catalog3Vo = new Catalog2Vo.Catalog3Vo(l2.getCatId().toString(), l3.getCatId().toString(), l3.getName());
+                            return catalog3Vo;
+                        }).collect(Collectors.toList());
+                        catalog2Vo.setCatalog3List(collect);
+                    }
+                    return catalog2Vo;
+                }).collect(Collectors.toList());
+            }
+            return catalog2Vos;
+        }));
+
+        return parent_cid;
+    }
     // TODO 产生对外内存溢出：OutOfDirectMemoryError
     // 原因：1. springboot2.0以后默认使用letture作为操作redis的客户端。使用netty进行网络通信
     // 2. lettuce的bug导致堆外内存溢出 -Xmx100m：netty如果没有指定堆外内存，默认使用 -Xmx300m
     // 可以通过-Dio.netty.maxDirectMemory只会调大堆外内存
     // 1. 升级lettuce客户端
     // 2. 使用jedis
-    @Override
-    public Map<String, List<Catalog2Vo>> getCatalogJson() {
+    public Map<String, List<Catalog2Vo>> getCatalogJson2() {
         // 给缓存中放json字符串，拿出的json字符串，还要逆转为能用的对象类型
 
         /**
