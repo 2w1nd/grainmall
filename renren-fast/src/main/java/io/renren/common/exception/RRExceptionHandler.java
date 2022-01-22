@@ -57,7 +57,7 @@ public class RRExceptionHandler {
 	}
 
 	@ExceptionHandler(Exception.class)
-	public R handleException(Exception e){
+	public R ception(Exception e){
 		logger.error(e.getMessage(), e);
 		return R.error();
 	}

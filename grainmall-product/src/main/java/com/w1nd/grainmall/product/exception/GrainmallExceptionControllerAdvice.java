@@ -24,7 +24,7 @@ import java.util.Map;
 public class GrainmallExceptionControllerAdvice {
 
     @ExceptionHandler(value= MethodArgumentNotValidException.class)   // 告诉这个方法接收哪些异常
-    public R handleValidException (MethodArgumentNotValidException e){
+    public R idException (MethodArgumentNotValidException e){
         log.error("数据校验出现问题{}, 异常类型:{}", e.getMessage(), e.getClass());
         BindingResult bindingResult = e.getBindingResult();
         Map<String, String> errorMap = new HashMap<>();

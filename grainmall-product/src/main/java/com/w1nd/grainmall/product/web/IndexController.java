@@ -114,4 +114,10 @@ public class IndexController {
         }
         return s;
     }
+
+    @ResponseBody
+    @GetMapping("/hello1")
+    public String hello1() {
+        return "hello1";
+    }
 }

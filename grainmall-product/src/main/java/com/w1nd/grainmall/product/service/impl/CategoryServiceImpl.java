@@ -89,7 +89,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             menu.setChildren(getChildrens(menu, entities));
             return menu;
         }).sorted((menu1, menu2) -> {
-            return (menu1.getSort()==null?0:menu1.getSort()) - (menu2.getSort()==null?0:menu2.getSort());
+            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
 
 
@@ -106,6 +106,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * 级联更新所有关联的数据
      * 1. 同时进行多种缓存操作   @Caching
      * 2. 指定删除某个分区下的所有数据 allEntries = true
+     *
      * @param category
      */
     // @Caching(evict = {
@@ -121,11 +122,21 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     /**
-     // 每一个需要缓存的数据我们都要指定要放到哪个名字的缓存【缓存的分区（按照业务类型分）】
-     *  自定义：
-     *  1. 指定生成的缓存使用的key
-     *  2. 指定缓存的数据的存活时间
-     *  3. 将数据存为json格式
+     * // 每一个需要缓存的数据我们都要指定要放到哪个名字的缓存【缓存的分区（按照业务类型分）】
+     * 自定义：
+     * 1. 指定生成的缓存使用的key
+     * 2. 指定缓存的数据的存活时间
+     * 3. 将数据存为json格式
+     * 自定义RedisCacheConfiguration即可
+     * Spring-Cache的不足：
+     * 1. 读模式：
+     * 缓存穿透：查询一个null数据。解决：缓存空数据，
+     * 缓存击穿：大量并发进来同时查询一个正好过期的数据  解决：加锁 ？但是默认是无加锁的
+     * 缓存雪崩：大量的key同时过期 解决：加上过期时间，  随机时间
+     * 2. 写模式：
+     * 1. 读写加锁
+     * 2. 引入Canal，感知到MySQL的更新去更新数据库
+     * 3. 读多写多，直接去数据库查询
      */
     @Cacheable(value = {"category"}, key = "#root.method.name")  // 代表当前方法的结果需要缓存，如果缓存中有，方法不用调用，如果缓存中没有，会调用方法，最后将方法
     @Override
@@ -136,6 +147,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 使用Cacheable实现
+     *
      * @return
      */
     @Cacheable(value = {"category"}, key = "#root.method.name")
@@ -175,6 +187,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
         return parent_cid;
     }
+
     // TODO 产生对外内存溢出：OutOfDirectMemoryError
     // 原因：1. springboot2.0以后默认使用letture作为操作redis的客户端。使用netty进行网络通信
     // 2. lettuce的bug导致堆外内存溢出 -Xmx100m：netty如果没有指定堆外内存，默认使用 -Xmx300m
@@ -199,12 +212,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             getCatalogJsonFromDbWithRedisLock();
         }
         // 转为指定的对象
-        Map<String, List<Catalog2Vo>> result = JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {});
+        Map<String, List<Catalog2Vo>> result = JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+        });
         return result;
     }
 
     /**
      * redisson加锁
+     *
      * @return
      */
     public Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithRedissonLock() {
@@ -226,6 +241,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 分布式加锁
+     *
      * @return
      */
     public Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithRedisLock() {
@@ -252,9 +268,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
 
-
     /**
      * 从数据库查询并封装分类数据（本地加锁）
+     *
      * @return
      */
     public Map<String, List<Catalog2Vo>> getCatalogJsonFromDb() {
@@ -268,13 +284,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 从数据库中获取数据
+     *
      * @return
      */
     private Map<String, List<Catalog2Vo>> getDataFromDb() {
         String catalogJSON = redisTemplate.opsForValue().get("catalogJSON");
         if (!StringUtils.isEmpty(catalogJSON)) {
             // 缓存为不为null直接返回
-            Map<String, List<Catalog2Vo>> result = JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {});
+            Map<String, List<Catalog2Vo>> result = JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+            });
             return result;
         }
         /**
@@ -323,6 +341,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 递归查找所有菜单的子菜单
+     *
      * @param root
      * @param all
      * @return
@@ -336,7 +355,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return categoryEntity;
         }).sorted((menu1, menu2) -> {
 //            菜单的排序
-            return (menu1.getSort()==null?0:menu1.getSort()) - (menu2.getSort()==null?0:menu2.getSort());
+            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
 
         return children;
