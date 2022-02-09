@@ -20,5 +20,6 @@
         <module>renren-generator</module>
         <module>grainmall-common</module>
         <module>grainmall-third-party</module>
+        <module>grainmall-auth-server</module>
     </modules>
 </project>
