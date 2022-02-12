@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 /***
  * 整合mybatis-plus
@@ -49,6 +50,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *  -> 想改缓存的配置，只需要给容器放一个redisCacheConfiguration即可
  *  -> 就会应用到当前
  */
+@EnableRedisHttpSession
 @EnableCaching
 @EnableFeignClients(basePackages = "com.w1nd.grainmall.product.feign")
 @EnableDiscoveryClient

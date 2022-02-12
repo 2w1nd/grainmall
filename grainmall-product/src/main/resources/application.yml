@@ -24,6 +24,8 @@ spring:
       key-prefix: CACHE_
       use-key-prefix: true
       cache-null-values: true
+  session:
+    store-type: redis
 #      毫秒
 
 mybatis-plus:

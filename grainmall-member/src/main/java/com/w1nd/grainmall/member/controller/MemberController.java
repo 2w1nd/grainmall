@@ -3,13 +3,14 @@ package com.w1nd.grainmall.member.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.w1nd.common.exception.BizCodeEnume;
+import com.w1nd.grainmall.member.exception.MailExistException;
+import com.w1nd.grainmall.member.exception.UserNameExistException;
 import com.w1nd.grainmall.member.feign.CouponFeignService;
+import com.w1nd.grainmall.member.vo.MemberLoginVo;
+import com.w1nd.grainmall.member.vo.MemberRegistVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.w1nd.grainmall.member.entity.MemberEntity;
 import com.w1nd.grainmall.member.service.MemberService;
@@ -98,6 +99,33 @@ public class MemberController {
 		memberService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
+    }
+
+    @RequestMapping("/regist")
+    public R regist(@RequestBody MemberRegistVo vo){
+        try{
+            // System.out.println("进入会员服务的controller, vo为：" + vo);
+            memberService.regist(vo);
+            //异常机制：通过捕获对应的自定义异常判断出现何种错误并封装错误信息
+        }catch (MailExistException e){
+            e.printStackTrace();
+            return R.error(BizCodeEnume.MAIL_EXIST_EXCEPTION.getCode(),BizCodeEnume.MAIL_EXIST_EXCEPTION.getMsg());
+        }catch (UserNameExistException e){
+            e.printStackTrace();
+            return R.error(BizCodeEnume.USER_EXIST_EXCEPTION.getCode(),BizCodeEnume.USER_EXIST_EXCEPTION.getMsg());
+        }
+        return R.ok();
+    }
+
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVo vo){
+        MemberEntity entity = memberService.login(vo);
+        if (entity != null){
+            return R.ok().setData(entity);
+        }else {
+            return R.error(BizCodeEnume.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getCode(),BizCodeEnume.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMsg());
+        }
+
     }
 
 }

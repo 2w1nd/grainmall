@@ -4,16 +4,27 @@ package com.w1nd.grainmall.thirdparty;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSClientBuilder;
+import com.w1nd.grainmall.thirdparty.component.MailComponent;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Properties;
 
 @SpringBootTest
+@RunWith(SpringRunner.class)
 public class GrainmallThirdPartyApplicationTests {
+
+    @Autowired
+    MailComponent mailComponent;
 
     @Autowired
     OSSClient ossClient;
@@ -39,6 +50,58 @@ public class GrainmallThirdPartyApplicationTests {
     }
 
     @Test
+    public void testMailSend() {
+        // receiver email
+        String to = "2964680209@qq.com";
+        //sender email
+        String from = "584202045@qq.com";
+        Properties props = System.getProperties();
+
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.ssl.enable", "true");
+        props.put("mail.smtp.host","smtp.qq.com");// 设置邮件服务器
+        props.put("mail.user","584202045@qq.com");
+        props.put("mail.password","bdbjgrzynxpmbfff");//开启pop3/smtp时的验证码
+        props.put("mail.smtp.port","25");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        // 获取默认session对象
+        Session session = Session.getDefaultInstance(props,new Authenticator(){
+            public PasswordAuthentication getPasswordAuthentication()
+            {
+                return new PasswordAuthentication(
+                        "584202045@qq.com",
+                        "bdbjgrzynxpmbfff"); //发件人邮件用户名、授权码
+            }
+        });
+        session.setDebug(true);//代表启用debug模式，可以在控制台输出smtp协议应答的过程
+
+        try{
+            // 创建默认的 MimeMessage 对象
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            message.setSubject("This is the Subject Line!");
+
+            // 设置消息体
+            message.setText("This is actual message");
+
+            // 发送消息
+            Transport.send(message);
+            System.out.println("Sent message successfully....");
+        }catch (MessagingException mex) {
+            mex.printStackTrace();
+        }
+    }
+
+
+    @Test
     public void contextLoads() {
     }
+
+    @Test
+    public void testSmsComponent() {
+        mailComponent.sendMailCode("2964680209@qq.com", "1234");
+    }
+
 }

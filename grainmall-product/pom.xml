@@ -74,7 +74,11 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
         </dependency>
-
+        <!--整合SpringSession完成session共享问题-->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.redisson/redisson -->
         <dependency>
             <groupId>org.redisson</groupId>

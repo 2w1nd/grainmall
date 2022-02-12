@@ -56,4 +56,14 @@ spring:
           uri: lb://grainmall-search
           predicates:
             - Host=search.grainmall.com
+
+        - id: grainmall_auth_route
+          uri: lb://grainmall-auth-server
+          predicates:
+            - Host=auth.grainmall.com
+
+        - id: grainmall_cart_route
+          uri: lb://grainmall-cart
+          predicates:
+            - Host=cart.grainmall.com
 ## 前端项目，带上/api

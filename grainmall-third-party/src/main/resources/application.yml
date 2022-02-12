@@ -17,6 +17,11 @@ spring:
   application:
     name: grainmall-third-party
 
+mail:
+  qq:
+    host: 584202045@qq.com
+    password: bdbjgrzynxpmbfff
+
 server:
   port: 30000
 
