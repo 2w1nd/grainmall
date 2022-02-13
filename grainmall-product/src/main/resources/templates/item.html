@@ -668,13 +668,10 @@
 					</div>
 
 					<div class="box-btns-two">
-						加入购物车
+						<a href="#" id="addToCart" th:attr="skuId=${item.info.skuId}">
+							加入购物车
+						</a>
 					</div>
-
-					<div class="box-btns-two">
-						立即抢购
-					</div>
-
 					<div class="box-btns-three">
 						<img src="/static/item/img/e4ed3606843f664591ff1f68f7fda12d.png" alt=""/> 分享
 					</div>
@@ -1369,10 +1366,10 @@
 	};
 
 
-	$(".addToCart").click(function () {
+	$("#addToCart").click(function () {
 		let skuId = $(this).attr("skuId");
 		let num = $("#productNum").val();
-		location.href = "http://cart.grainmall.com/addCartItem?skuId=" + skuId + "&num=" + num;
+		location.href = "http://cart.grainmall.com/addToCart?skuId=" + skuId + "&num=" + num;
 		return false;
 	});
 
@@ -1388,6 +1385,7 @@
 		}
 		return false;
 	});
+
 
 </script>
 

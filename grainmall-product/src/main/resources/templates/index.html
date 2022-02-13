@@ -95,7 +95,7 @@
       </b>
       <ul>
         <li>
-          <a th:if="${session.loginUser != null}">欢迎, [[${session.loginUser == null ? '': session.loginUser.nickname}]]</a>
+          <a th:if="${session.loginUser != null}">欢迎, [[${session.loginUser.nickname == null ? '': session.loginUser.nickname}]]</a>
           <a th:if="${session.loginUser == null}" href="http://auth.grainmall.com/login.html">你好，请登录</a>
         </li>
         <li>
@@ -103,7 +103,7 @@
         </li>
         <span>|</span>
         <li>
-          <a href="/statichttp://member.gulimall.com/memberOrder.html">我的订单</a>
+          <a href="/statichttp://member.grainmall.com/memberOrder.html">我的订单</a>
         </li>
 
 
@@ -121,7 +121,7 @@
     <div class="header_ico">
       <div class="header_gw">
         <img src="/static/index/img/img_15.png" />
-        <span><a href="/statichttp://cart.gulimall.com/cart.html">我的购物车</a></span>
+        <span><a href="http://cart.grainmall.com/cart.html">我的购物车</a></span>
         <span>0</span>
       </div>
       <div class="header_ko">
@@ -604,7 +604,7 @@
   })
 
   function toDetail(skuId) {
-    location.href = "http://item.gulimall.com/" + skuId + ".html";
+    location.href = "http://item.grainmall.com/" + skuId + ".html";
   }
 
 </script>
