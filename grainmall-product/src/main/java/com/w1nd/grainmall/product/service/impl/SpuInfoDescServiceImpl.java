@@ -1,5 +1,7 @@
 package com.w1nd.grainmall.product.service.impl;
 
+import com.w1nd.grainmall.product.entity.SkuInfoEntity;
+import com.w1nd.grainmall.product.entity.SpuInfoEntity;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;

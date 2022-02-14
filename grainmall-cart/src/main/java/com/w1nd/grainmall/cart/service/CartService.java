@@ -3,6 +3,7 @@ package com.w1nd.grainmall.cart.service;
 import com.w1nd.grainmall.cart.vo.Cart;
 import com.w1nd.grainmall.cart.vo.CartItem;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface CartService {
@@ -39,4 +40,6 @@ public interface CartService {
     void changeItemCount(Long skuId, Integer num);
 
     void deleteItem(Long skuId);
+
+    List<CartItem> getUserCartItems();
 }

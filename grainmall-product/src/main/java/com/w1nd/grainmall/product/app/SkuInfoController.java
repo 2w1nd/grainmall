@@ -3,12 +3,11 @@ package com.w1nd.grainmall.product.app;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.w1nd.grainmall.product.entity.SpuInfoEntity;
+import com.w1nd.grainmall.product.service.SpuInfoDescService;
+import com.w1nd.grainmall.product.service.SpuInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.w1nd.grainmall.product.entity.SkuInfoEntity;
 import com.w1nd.grainmall.product.service.SkuInfoService;
@@ -29,6 +28,9 @@ import com.w1nd.common.utils.R;
 public class SkuInfoController {
     @Autowired
     private SkuInfoService skuInfoService;
+
+    @Autowired
+    private SpuInfoService spuInfoService;
 
     /**
      * 列表
@@ -86,4 +88,17 @@ public class SkuInfoController {
         return R.ok();
     }
 
+    @GetMapping("/{skuId}/price")
+    public R getPrice(@PathVariable("skuId") Long skuId){
+        System.out.println("进入product的getprice方法");
+        SkuInfoEntity byId = skuInfoService.getById(skuId);
+        return R.ok().setData(byId.getPrice().toString());
+    }
+
+    @GetMapping("/skuId/{id}")
+    public R getSpuInfoBySkuId(@PathVariable("id") Long skuId){
+        System.out.println("进入product的getSpuInfoBySkuId方法");
+        SpuInfoEntity entity = spuInfoService.getSpuInfoBySkuId(skuId);
+        return R.ok().setData(entity);
+    }
 }

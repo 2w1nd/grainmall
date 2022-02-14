@@ -29,6 +29,7 @@ public enum  BizCodeEnume {
     PRODUCT_UP_EXCEPTION(11000, "商品上架异常"),
     USER_EXIST_EXCEPTION(15001,"用户已存在"),
     MAIL_EXIST_EXCEPTION(15002,"邮箱已存在"),
+    NO_STOCK_EXCEPTION(210000, "商品库存不足"),
     LOGINACCT_PASSWORD_INVAILD_EXCEPTION(15003,"账号或密码错误");
 
     private int code;
