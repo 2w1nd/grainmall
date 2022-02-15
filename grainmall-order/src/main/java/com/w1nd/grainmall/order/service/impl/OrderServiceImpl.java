@@ -3,6 +3,7 @@ package com.w1nd.grainmall.order.service.impl;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.w1nd.common.exception.NoStockException;
+import com.w1nd.common.to.mq.OrderTo;
 import com.w1nd.common.utils.R;
 import com.w1nd.common.vo.MemberResponseVO;
 import com.w1nd.grainmall.order.constant.OrderConstant;
@@ -15,6 +16,9 @@ import com.w1nd.grainmall.order.interceptor.LoginUserInterceptor;
 import com.w1nd.grainmall.order.service.OrderItemService;
 import com.w1nd.grainmall.order.to.OrderCreateTo;
 import com.w1nd.grainmall.order.vo.*;
+import io.seata.spring.annotation.GlobalTransactional;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -65,6 +69,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Autowired
     StringRedisTemplate redisTemplate;
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
     @Autowired
     OrderItemService orderItemService;
@@ -146,7 +153,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
      *      *
      * @param submitVo
      * @return
+     *
+     *
+     * 本地事务失效问题
+     *  同一个对象内事务方法互调默认失效，原因是绕过了代理对象，事务使用代理对象来控制的
+     *  解决：使用代理对象来调用事务方法
+     *  1. 引入spring-boot-starter-aop，引入aspenctj
+     *  2.
      */
+    @GlobalTransactional
     @Transactional
     @Override
     public SubmitOrderResponseVo submitOrder(OrderSubmitVo submitVo) {
@@ -189,9 +204,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 wareSkuLockVo.setLocks(orderItemVos);
                 // TODO 远程锁库存
                 // 库存成功了，但是由于网络原因超时了，订单回滚，库存不回滚
+
+                // 为了保证高并发，
                 R r = wmsFeignService.orderLockStock(wareSkuLockVo);
                 if (r.getCode() == 0){
                     //锁成功了
+                    rabbitTemplate.convertAndSend("order-event-exchange", "order.create.order", order.getOrder());
                     // 如果这里有其他业务发生异常，也会出现远程服务假失败
                     response.setOrder(order.getOrder());
                     return response;
@@ -214,6 +232,33 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 //        }
     }
 
+    @Override
+    public OrderEntity getOrderByOrderSn(String orderSn) {
+        OrderEntity order_sn = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+        return order_sn;
+    }
+
+    /**
+     * 关闭订单
+     * @param entity
+     */
+    @Override
+    public void closeOrder(OrderEntity entity) {
+        //查询当前这个订单地最新状态
+        OrderEntity orderEntity = this.getById(entity.getId());
+        if (orderEntity.getStatus() == OrderStatusEnum.CREATE_NEW.getCode()){
+            //关单
+            OrderEntity update = new OrderEntity();
+            update.setId(entity.getId());
+            update.setStatus(OrderStatusEnum.CANCLED.getCode());
+            this.updateById(update);
+            OrderTo orderTo = new OrderTo();
+            BeanUtils.copyProperties(orderEntity,orderTo);
+            //发给MQ一个
+            rabbitTemplate.convertAndSend("order-event-exchange","order.release.other",orderTo);
+        }
+    }
+
     /**
      * 生成一个订单
      * @return
@@ -230,7 +275,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         createTo.setOrderItems(itemEntities);
         // 3、计算价格、积分等相关
         computePrice(orderEntity,itemEntities);
-        System.out.println(createTo);
         return createTo;
     }
 
