@@ -278,7 +278,6 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         //变为已解锁
         taskDetailEntity.setLockStatus(2);
         wareOrderTaskDetailService.updateById(taskDetailEntity);
-
     }
 
     @Data

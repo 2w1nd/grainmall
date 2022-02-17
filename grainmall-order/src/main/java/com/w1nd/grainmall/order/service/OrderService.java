@@ -3,9 +3,7 @@ package com.w1nd.grainmall.order.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.w1nd.common.utils.PageUtils;
 import com.w1nd.grainmall.order.entity.OrderEntity;
-import com.w1nd.grainmall.order.vo.OrderConfirmVo;
-import com.w1nd.grainmall.order.vo.OrderSubmitVo;
-import com.w1nd.grainmall.order.vo.SubmitOrderResponseVo;
+import com.w1nd.grainmall.order.vo.*;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -37,5 +35,16 @@ public interface OrderService extends IService<OrderEntity> {
      * @param entity
      */
     void closeOrder(OrderEntity entity);
+
+    /**
+     * 获取当前订单的支付信息
+     * @param orderSn
+     * @return
+     */
+    PayVo getOrderPay(String orderSn);
+
+    PageUtils queryPageWithItem(Map<String, Object> params);
+
+    String handlePayResult(PayAsyncVo vo);
 }
 

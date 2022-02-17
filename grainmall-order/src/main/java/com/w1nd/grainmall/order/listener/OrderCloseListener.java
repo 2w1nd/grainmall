@@ -22,6 +22,7 @@ public class OrderCloseListener {
     public void listener(OrderEntity entity, Channel channel, Message message) throws IOException {
         try {
             orderService.closeOrder(entity);
+
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
             // 修改失败 拒绝消息 使消息重新入队

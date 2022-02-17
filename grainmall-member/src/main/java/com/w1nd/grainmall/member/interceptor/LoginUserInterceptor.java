@@ -1,4 +1,4 @@
-package com.w1nd.grainmall.order.interceptor;
+package com.w1nd.grainmall.member.interceptor;
 
 import com.w1nd.common.constant.AuthServerConstant;
 import com.w1nd.common.vo.MemberResponseVO;
@@ -17,10 +17,10 @@ public class LoginUserInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
         AntPathMatcher matcher = new AntPathMatcher();
-        boolean status = matcher.match("/order/order/status/**", requestURI);
-        boolean payed = matcher.match("/payed/**", requestURI);
-        if (status || payed)
+        boolean status = matcher.match("/member/**", requestURI);
+        if (status){
             return true;
+        }
 
 
         MemberResponseVO attribute = (MemberResponseVO) request.getSession().getAttribute(AuthServerConstant.LOGIN_USER);
@@ -33,5 +33,6 @@ public class LoginUserInterceptor implements HandlerInterceptor {
             response.sendRedirect("http://auth.grainmall.com/login.html");
             return false;
         }
+
     }
 }

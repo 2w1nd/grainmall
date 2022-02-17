@@ -36,7 +36,7 @@ public class MyRabbitMQConfig {
         HashMap<String, Object> arguments = new HashMap<>();
         arguments.put("x-dead-letter-exchange", "order-event-exchange");
         arguments.put("x-dead-letter-routing-key", "order.release.order");
-        arguments.put("x-message-ttl", 60000); // 消息过期时间 1分钟
+        arguments.put("x-message-ttl", 1800000); // 消息过期时间 30分钟
         Queue queue = new Queue("order.delay.queue", true, false, false, arguments);
 
         return queue;

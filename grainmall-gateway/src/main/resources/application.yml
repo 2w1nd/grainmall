@@ -71,4 +71,10 @@ spring:
           uri: lb://grainmall-order
           predicates:
             - Host=order.grainmall.com
+
+        - id: grainmall_member_route
+          uri: lb://grainmall-member
+          predicates:
+            - Host=member.grainmall.com
+
 ## 前端项目，带上/api
