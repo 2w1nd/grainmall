@@ -201,7 +201,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
          *          1、没有这个订单，必须解锁库存
          *          2、有这个订单，不一定解锁库存
          *              订单状态：已取消：解锁库存
-         *                      已支付：不能解锁库存
+         *                      已支付：不能解锁库存，设置为扣减
          */
         WareOrderTaskDetailEntity taskDetailInfo = wareOrderTaskDetailService.getById(detailId);
         if (taskDetailInfo != null) {
@@ -226,7 +226,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
                 } else if (orderInfo.getStatus() == 1) { // 如果该订单已付款，则要修改库存工作单为已扣减
                     if (taskDetailInfo.getLockStatus() == 1) {
                         //当前库存工作单详情状态1，已锁定，修改为扣减
-                        // deductionStock();
+                        deductionStock(detail.getSkuId(),detail.getWareId(),detail.getSkuNum(),detailId);
                     }
                 }
             } else {
@@ -239,6 +239,21 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         }
     }
 
+    /**
+     * 设置库存为已扣减
+     * @param skuId
+     * @param wareId
+     * @param skuNum
+     * @param detailId
+     */
+    private void deductionStock(Long skuId, Long wareId, Integer skuNum, Long detailId) {
+        //更新工作单的状态
+        WareOrderTaskDetailEntity taskDetailEntity = new WareOrderTaskDetailEntity();
+        taskDetailEntity.setId(detailId);
+        //变为已解锁
+        taskDetailEntity.setLockStatus(3);
+        wareOrderTaskDetailService.updateById(taskDetailEntity);
+    }
 
 
     /**

@@ -47,7 +47,7 @@ public class MyRabbitMQConfig {
         //			@Nullable Map<String, Object> arguments
         Map<String, Object> arguments = new HashMap<>();
         arguments.put("x-dead-letter-exchange", "stock-event-exchange");
-        arguments.put("x-dead-letter-routing-key", "order.release");
+        arguments.put("x-dead-letter-routing-key", "stock.release");
         arguments.put("x-message-ttl", 120000);    // 40 分钟 = 4000000
         return new Queue("stock.delay.queue", true, false, false, arguments);
     }

@@ -253,7 +253,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         //查询当前这个订单地最新状态
         OrderEntity orderEntity = this.getById(entity.getId());
         if (orderEntity.getStatus() == OrderStatusEnum.CREATE_NEW.getCode()){
-            //关单
+            // 取消订单
             OrderEntity update = new OrderEntity();
             update.setId(entity.getId());
             update.setStatus(OrderStatusEnum.CANCLED.getCode());
