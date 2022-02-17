@@ -4,15 +4,10 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 public class MyRabbitMQConfig {
@@ -20,7 +15,7 @@ public class MyRabbitMQConfig {
     /* 容器中的Queue、Exchange、Binding 会自动创建（在RabbitMQ）不存在的情况下 */
 
     /**
-     * 死信队列
+     * 延迟队列
      *
      * @return
      */
@@ -36,14 +31,14 @@ public class MyRabbitMQConfig {
         HashMap<String, Object> arguments = new HashMap<>();
         arguments.put("x-dead-letter-exchange", "order-event-exchange");
         arguments.put("x-dead-letter-routing-key", "order.release.order");
-        arguments.put("x-message-ttl", 1800000); // 消息过期时间 30分钟
+        arguments.put("x-message-ttl", 60000); // 消息过期时间 30分钟 = 1800000
         Queue queue = new Queue("order.delay.queue", true, false, false, arguments);
 
         return queue;
     }
 
     /**
-     * 普通队列
+     * 死信队列
      *
      * @return
      */
@@ -91,7 +86,6 @@ public class MyRabbitMQConfig {
 
     @Bean
     public Binding orderReleaseBinding() {
-
         return new Binding("order.release.order.queue",
                 Binding.DestinationType.QUEUE,
                 "order-event-exchange",

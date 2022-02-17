@@ -223,6 +223,11 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
                         //当前库存工作单详情状态1，已锁定，但是未解锁才可以解锁
                         unLockStock(detail.getSkuId(),detail.getWareId(),detail.getSkuNum(),detailId);
                     }
+                } else if (orderInfo.getStatus() == 1) { // 如果该订单已付款，则要修改库存工作单为已扣减
+                    if (taskDetailInfo.getLockStatus() == 1) {
+                        //当前库存工作单详情状态1，已锁定，修改为扣减
+                        // deductionStock();
+                    }
                 }
             } else {
                 //消息拒绝以后重新放在队列里面，让别人继续消费解锁
@@ -233,6 +238,8 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             //无需解锁
         }
     }
+
+
 
     /**
      * 防止订单服务卡顿，导致订单状态消息一直改不了，库存优先到期，查订单状态新建，什么都不处理
