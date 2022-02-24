@@ -1,8 +1,12 @@
 package com.w1nd.grainmall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
+import com.w1nd.common.utils.R;
 import com.w1nd.grainmall.product.entity.SkuImagesEntity;
 import com.w1nd.grainmall.product.entity.SpuInfoDescEntity;
+import com.w1nd.grainmall.product.feign.SeckillFeignService;
 import com.w1nd.grainmall.product.service.*;
+import com.w1nd.grainmall.product.vo.SeckillInfoVo;
 import com.w1nd.grainmall.product.vo.SkuItemSaleAttrVo;
 import com.w1nd.grainmall.product.vo.SkuItemVo;
 import com.w1nd.grainmall.product.vo.SpuItemAttrGroupVo;
@@ -38,6 +42,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
     @Autowired
     AttrGroupService attrGroupService;
+
+    @Autowired
+    SeckillFeignService seckillFeignService;
 
     @Autowired
     SkuSaleAttrValueService skuSaleAttrValueService;
@@ -146,6 +153,25 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         CompletableFuture<Void> imageFuture = CompletableFuture.runAsync(() -> {
             List<SkuImagesEntity> images = imagesService.getImagesBySkuId(skuId);
             skuItemVo.setImages(images);
+        }, executor);
+
+        // 3. 查询当前sku是否参与秒杀优惠
+        CompletableFuture<Void> seckillFuture = CompletableFuture.runAsync(() -> {
+            //3、远程调用查询当前sku是否参与秒杀优惠活动
+            R skuSeckilInfo = seckillFeignService.getSkuSeckillInfo(skuId);
+            if (skuSeckilInfo.getCode() == 0) {
+                //查询成功
+                SeckillInfoVo seckilInfoData = skuSeckilInfo.getData("data", new TypeReference<SeckillInfoVo>() {
+                });
+                skuItemVo.setSeckillInfoVo(seckilInfoData);
+
+                if (seckilInfoData != null) {
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime > seckilInfoData.getEndTime()) {
+                        skuItemVo.setSeckillInfoVo(null);
+                    }
+                }
+            }
         }, executor);
 
         // 等待所有任务都返回

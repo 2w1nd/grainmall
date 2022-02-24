@@ -1,14 +1,11 @@
 package com.w1nd.grainmall.coupon.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.w1nd.grainmall.coupon.entity.SeckillSessionEntity;
 import com.w1nd.grainmall.coupon.service.SeckillSessionService;
@@ -29,6 +26,13 @@ import com.w1nd.common.utils.R;
 public class SeckillSessionController {
     @Autowired
     private SeckillSessionService seckillSessionService;
+
+    @GetMapping("/lasts3DaySession")
+    public R getLasts3DaySession(){
+        System.out.println("获取3天内的秒杀商品");
+        List<SeckillSessionEntity> session = seckillSessionService.getLasts3DaySession();
+        return R.ok().setData(session);
+    }
 
     /**
      * 列表

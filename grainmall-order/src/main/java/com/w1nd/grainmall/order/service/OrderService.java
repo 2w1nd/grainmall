@@ -1,6 +1,7 @@
 package com.w1nd.grainmall.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.w1nd.common.to.mq.SeckillOrderTo;
 import com.w1nd.common.utils.PageUtils;
 import com.w1nd.grainmall.order.entity.OrderEntity;
 import com.w1nd.grainmall.order.vo.*;
@@ -46,5 +47,7 @@ public interface OrderService extends IService<OrderEntity> {
     PageUtils queryPageWithItem(Map<String, Object> params);
 
     String handlePayResult(PayAsyncVo vo);
+
+    void createSeckillOrder(SeckillOrderTo orderTo);
 }
 

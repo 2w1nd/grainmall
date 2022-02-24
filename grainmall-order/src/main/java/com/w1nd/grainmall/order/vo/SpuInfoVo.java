@@ -28,6 +28,10 @@ public class SpuInfoVo {
      */
     private Long brandId;
     /**
+     * 品牌名
+     */
+    private String brandName;
+    /**
      *
      */
     private BigDecimal weight;

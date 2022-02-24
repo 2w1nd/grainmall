@@ -108,4 +108,29 @@ public class MyRabbitMQConfig {
                 null);
     }
 
+    /**
+     * 商品秒杀队列
+     * @return
+     */
+    @Bean
+    public Queue orderSecKillOrrderQueue() {
+        Queue queue = new Queue("order.seckill.order.queue", true, false, false);
+        return queue;
+    }
+
+    @Bean
+    public Binding orderSecKillOrrderQueueBinding() {
+        //String destination, DestinationType destinationType, String exchange, String routingKey,
+        // 			Map<String, Object> arguments
+        Binding binding = new Binding(
+                "order.seckill.order.queue",
+                Binding.DestinationType.QUEUE,
+                "order-event-exchange",
+                "order.seckill.order",
+                null);
+
+        return binding;
+    }
+
+
 }

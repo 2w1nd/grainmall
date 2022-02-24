@@ -8,7 +8,7 @@
         <version>2.1.8.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.xunqi.gulimall</groupId>
+    <groupId>com.w1nd.grainmall</groupId>
     <artifactId>grainmall-seckill</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>grainmall-seckill</name>
@@ -104,7 +104,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
 
     </dependencies>
 
