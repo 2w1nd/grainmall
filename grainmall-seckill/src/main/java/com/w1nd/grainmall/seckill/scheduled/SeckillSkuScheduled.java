@@ -23,7 +23,7 @@ public class SeckillSkuScheduled {
     //秒杀商品上架功能的锁
     private final String upload_lock = "seckill:upload:lock";
 
-    // @Scheduled(cron = "*/5 * * * * ? ")
+    // @Scheduled(cron = "*/5 * * * * ? ")  //测试
     @Scheduled(cron = "0 0 1/1 * * ? ")
     public void uploadSeckillSkuLatest3Days(){
         //1、重复上架无需处理

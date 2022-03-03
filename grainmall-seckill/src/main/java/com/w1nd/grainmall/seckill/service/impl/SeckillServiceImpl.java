@@ -57,6 +57,9 @@ public class SeckillServiceImpl implements SeckillService {
 
     private final String SKU_STOCK_SEMAPHORE = "seckill:stock:";    //+商品随机码
 
+    /**
+     * 上架最近3天内的商品
+     */
     @Override
     public void uploadSeckillSkuLatest3Days() {
 

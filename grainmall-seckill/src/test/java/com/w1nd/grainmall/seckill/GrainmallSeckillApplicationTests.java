@@ -13,4 +13,9 @@ public class GrainmallSeckillApplicationTests {
     public void contextLoads() {
     }
 
+    @Test
+    public void test() {
+        String a = "aaaa";
+        a = "bbbb";
+    }
 }

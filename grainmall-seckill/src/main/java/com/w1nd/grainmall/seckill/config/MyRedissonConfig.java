@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 public class MyRedissonConfig {

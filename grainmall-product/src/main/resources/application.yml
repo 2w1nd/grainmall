@@ -39,4 +39,4 @@ server:
   port: 10000
 logging:
   level:
-    com.w1nd.grainmall: debug
+    com.w1nd.grainmall: warn
